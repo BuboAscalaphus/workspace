@@ -1,0 +1,18 @@
+repositories:
+  owl_image_queue:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl_image_queue.git
+    version: main
+  owl_msgs:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl_msgs.git
+    version: main
+  owl_sense:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl-sense.git
+    version: main
+  owl_tools:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl_tools.git
+    version: main
+
