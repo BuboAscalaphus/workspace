@@ -15,11 +15,20 @@ class PredictReq(BaseModel):
     imgsz: Optional[int] = 640
     device: Optional[str] = None          # "0" for GPU 0; None for CPU
 
-def get_model(name: str):
-    if name not in _models:
-        _models[name] = YOLO(name)
-    return _models[name]
+def resolve_model_path(val: str) -> str:
+    if os.path.isabs(val):
+        return val
+    cand = os.path.join("/models", val)
+    return cand if os.path.exists(cand) else val
 
+def get_model(val: str):
+    path = resolve_model_path(val)
+    if not os.path.exists(path):
+        raise HTTPException(404, detail=f"Model not found in container: {path}")
+    if path not in _models:
+        _models[path] = YOLO(path)
+    return _models[path]
+    
 @app.post("/predict")
 def predict(req: PredictReq):
     if not os.path.exists(req.image_path):
