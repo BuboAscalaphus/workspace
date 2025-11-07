@@ -4,6 +4,7 @@
 /log/**
 
 !/src/owl_bags/
-!/src/owl_bags/**
+!/src/owl_bags/file_status.txt
+!/src/owl_bags/.gitkeep
 !/src/owl_weights/
 !/src/owl_weights/**
