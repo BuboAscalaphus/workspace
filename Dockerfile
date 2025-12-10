@@ -28,9 +28,7 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/* /tmp/packages.technexion.gpg
 
 # pyvizionsdk + requests + watchdog
-RUN pip3 install --no-cache-dir \
-    --extra-index-url https://pypi.vizionsdk.com/root/pyvizionsdk/+simple/ \
-    pyvizionsdk \
+RUN pip install pyvizionsdk-25.10.3-cp310-cp310-manylinux_2_31_aarch64.whl \
  && pip3 install --no-cache-dir requests watchdog
 
 # Create mount points used at runtime (they'll be bind-mounted)
