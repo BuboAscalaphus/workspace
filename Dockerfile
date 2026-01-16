@@ -22,23 +22,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # ============================================================
 
 # Copio i pacchetti locali (cartella third_party nel build context)
-COPY third_party/vizionsdk-linuxarm64-25.10.3.deb /tmp/
-COPY third_party/pyvizionsdk-25.10.3-cp310-cp310-manylinux_2_31_aarch64.whl /tmp/
+COPY third_party/vizionsdk-linuxarm64-25.12.1.deb /tmp/
+COPY third_party/pyvizionsdk-25.12.1-cp310-cp310-manylinux_2_31_aarch64.whl /tmp/
 
 # Installa vizionsdk da .deb (senza vizionviewer)
 RUN set -eux; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
-        /tmp/vizionsdk-linuxarm64-25.10.3.deb; \
+        /tmp/vizionsdk-linuxarm64-25.12.1.deb; \
     rm -rf /var/lib/apt/lists/*
 
 # pyvizionsdk + requests + watchdog (versione fissata da .whl)
 RUN pip3 install --no-cache-dir \
-        /tmp/pyvizionsdk-25.10.3-cp310-cp310-manylinux_2_31_aarch64.whl \
+        /tmp/pyvizionsdk-25.12.1-cp310-cp310-manylinux_2_31_aarch64.whl \
  && pip3 install --no-cache-dir \
         requests \
         watchdog \
- && rm -f /tmp/pyvizionsdk-25.10.3-cp310-cp310-manylinux_2_31_aarch64.whl
+ && rm -f /tmp/pyvizionsdk-25.12.1-cp310-cp310-manylinux_2_31_aarch64.whl
 
 
 # ============================================================
