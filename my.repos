@@ -15,4 +15,11 @@ repositories:
     type: git
     url: https://github.com/BuboAscalaphus/owl_tools.git
     version: main
-
+  owl_imu:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl_imu.git
+    version: main
+  owl_rtk:
+    type: git
+    url: https://github.com/BuboAscalaphus/owl_rtk.git
+    version: main
