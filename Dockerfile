@@ -40,6 +40,7 @@ RUN pip3 install --no-cache-dir \
         watchdog \
  && rm -f /tmp/pyvizionsdk-25.12.1-cp310-cp310-manylinux_2_31_aarch64.whl
 
+RUN pip3 install smbus2
 
 # ============================================================
 # ==================  UTENTE ROS / DEV  ======================
