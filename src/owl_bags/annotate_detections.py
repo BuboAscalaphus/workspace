@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 # annotate_detections.py
 
-# example: python3 annotate_detections.py ./processed/2025-12-12/results.jsonl --out ./tmp/
+# example:
+# python3 annotate_detections.py ./processed/2025-12-12/results.jsonl --out ./tmp/
+# python3 annotate_detections.py ./processed/.../results.jsonl --out ./tmp/ --rotate-quadrants 1
 
 import os
 import json
@@ -70,6 +72,17 @@ def clamp_xyxy(x1, y1, x2, y2, w, h) -> Tuple[int, int, int, int]:
     return x1, y1, x2, y2
 
 
+def rotate_90n_bgr(img_bgr, q: int):
+    q = int(q) % 4
+    if q == 0:
+        return img_bgr
+    if q == 1:
+        return cv2.rotate(img_bgr, cv2.ROTATE_90_CLOCKWISE)
+    if q == 2:
+        return cv2.rotate(img_bgr, cv2.ROTATE_180)
+    return cv2.rotate(img_bgr, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+
 def annotate_image(
     img_bgr,
     boxes_xyxy: List[List[float]],
@@ -89,7 +102,6 @@ def annotate_image(
         x1, y1, x2, y2 = box
         x1, y1, x2, y2 = clamp_xyxy(x1, y1, x2, y2, w, h)
 
-        # testo etichetta
         cls_id = safe_int(clss[idx], -1) if idx < len(clss) else -1
         conf = safe_float(confs[idx], 0.0) if idx < len(confs) else None
 
@@ -99,10 +111,8 @@ def annotate_image(
         else:
             text = name
 
-        # box
         cv2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-        # label con background
         (tw, th), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)
         ty1 = max(0, y1 - th - baseline - 6)
         cv2.rectangle(img_bgr, (x1, ty1), (x1 + tw + 8, ty1 + th + baseline + 6), (0, 255, 0), -1)
@@ -145,6 +155,12 @@ def main():
     ap.add_argument("--root-prefix", default=None, help="Base path to strip when --keep-tree is used.")
     ap.add_argument("--ext", default=None, help="Force output extension (e.g. .jpg, .png). Default keeps original.")
     ap.add_argument("--no-conf", action="store_true", help="Do not draw confidence in label.")
+    ap.add_argument(
+        "--rotate-quadrants",
+        type=int,
+        default=None,
+        help="Override rotation (0..3, 90° CW steps). If not set, uses value from JSONL (data.rotate_quadrants).",
+    )
     args = ap.parse_args()
 
     ensure_dir(args.out)
@@ -179,10 +195,19 @@ def main():
         if args.skip_empty and (not boxes_xyxy):
             continue
 
+        # rotation: prefer CLI override, else value produced by ultra_api in data.rotate_quadrants
+        q = args.rotate_quadrants
+        if q is None:
+            q = data.get("rotate_quadrants", 0)
+        q = safe_int(q, 0) % 4
+
         img = cv2.imread(image_path, cv2.IMREAD_COLOR)
         if img is None:
             print(f"[WARN] Line {lineno}: cv2 could not read {image_path}. Skipping.")
             continue
+
+        if q:
+            img = rotate_90n_bgr(img, q)
 
         img = annotate_image(
             img,
@@ -211,4 +236,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
